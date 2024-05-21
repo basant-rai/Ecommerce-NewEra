@@ -6,10 +6,11 @@ import ReactHook from "../../hooks/hook"
 const Home = () => {
   const [color, setColor] = useState('bg-green-50');
 
+  console.log(color)
+
   return (
     <div>
       <ReactHook />
-
       <div className={`${color} p-20`}>{color}</div>
 
       <Color
