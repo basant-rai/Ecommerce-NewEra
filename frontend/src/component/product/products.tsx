@@ -8,9 +8,9 @@ interface IProduct {
   image: string,
   rating: {
     rate: number,
-    count: number
+    count: number 
   }
-  title: string,
+  title:   string,
   price: number
 }
 
@@ -22,6 +22,7 @@ const Products = () => {
     const getProducts = async () => {
       try {
         const res = await fetch('https://fakestoreapi.com/products');
+        console.log(res)
         const products = await res.json();
         setProducts(products)
       } catch (error: any) {
