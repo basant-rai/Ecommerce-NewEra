@@ -1,18 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-
-interface IProduct {
-  category: string,
-  description: string,
-  id: number,
-  image: string,
-  rating: {
-    rate: number,
-    count: number 
-  }
-  title:   string,
-  price: number
-}
+import { IProduct } from "../../interface/product"
 
 const Products = () => {
   const [products, setProducts] = useState<IProduct[]>([])
@@ -22,7 +10,6 @@ const Products = () => {
     const getProducts = async () => {
       try {
         const res = await fetch('https://fakestoreapi.com/products');
-        console.log(res)
         const products = await res.json();
         setProducts(products)
       } catch (error: any) {
