@@ -1,31 +1,14 @@
-import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
-import { IProduct } from "../../interface/product"
+import React, { useContext } from 'react'
+import { GlobalContext } from '../context/global-context'
+import { Link } from 'react-router-dom'
 
-const Products = () => {
-  const [products, setProducts] = useState<IProduct[]>([])
-
-  useEffect(() => {
-
-    const getProducts = async () => {
-      try {
-        const res = await fetch('https://fakestoreapi.com/products');
-        const products = await res.json();
-        setProducts(products)
-      } catch (error: any) {
-        console.log(error)
-      }
-    }
-
-    getProducts();
-
-  }, [])
-
-
+const ProductWithContext = () => {
+  const { products } = useContext(GlobalContext);
+  
   return (
     <div className="grid grid-cols-4 gap-10 p-10">
       {
-        products.map((product) => (
+        products?.map((product) => (
           <div key={product.id} className="border p-5 rounded-lg space-y-5">
             <div className="flex items-center justify-center">
               <img src={product.image} alt={product.title} className="h-32 w-32" />
@@ -49,4 +32,4 @@ const Products = () => {
   )
 }
 
-export default Products
+export default ProductWithContext
