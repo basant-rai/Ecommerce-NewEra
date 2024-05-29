@@ -1,4 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
+import Button from '../component/reusable/button/button';
+import { useEffect, useState } from 'react';
 
 // conditional statement
 //  let age =12;
@@ -27,6 +29,15 @@ const NavItems = [
 const Header = () => {
 
   const location = useLocation();
+  const [isLogin, setIsLogin] = useState(false);
+
+  useEffect(() => {
+    if (location.pathname === "/login") {
+      setIsLogin(true);
+    }else{
+      setIsLogin(false);
+    }
+  }, [location]);
 
   return (
 
@@ -56,6 +67,26 @@ const Header = () => {
               ))
             }
           </ul>
+        </div>
+        <div className='flex gap-2 items-center'>
+          <Link to="/login">
+            <Button
+              buttonType={"button"}
+              buttonColor={isLogin ? { primary: true } : { outline: true }}
+              rounded
+            >
+              Sign in
+            </Button>
+          </Link>
+          <Link to="/register">
+            <Button
+              buttonType={"button"}
+              buttonColor={!isLogin ? { primary: true } : { outline: true }}
+              rounded
+            >
+              Register
+            </Button>
+          </Link>
         </div>
       </div>
     </nav>

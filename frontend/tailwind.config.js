@@ -5,7 +5,16 @@ module.exports = {
     'node_modules/flowbite-react/lib/esm/**/*.js'
   ],
   theme: {
-    extend: {},
+    extend: {
+      container: {
+        center: true,
+        screens: {
+          '2xl': '1240px',
+
+        },
+      },
+
+    },
   },
   plugins: [
     require('flowbite/plugin')
