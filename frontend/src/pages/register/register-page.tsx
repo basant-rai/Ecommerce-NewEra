@@ -42,6 +42,8 @@ const RegisterPage = () => {
     resolver: yupResolver(registerValidation),
   });
 
+  
+
   const onRegister = useCallback((values: IRegisterForm) => {
     console.log(values);
   }, [])
