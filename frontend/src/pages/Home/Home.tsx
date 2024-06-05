@@ -1,11 +1,13 @@
 
 import HomeSlider from "../../component/home/carasel";
+import SwiperSlider from "../../component/home/silder";
 
 const Home = () => {
 
   return (
     <div>
-      <HomeSlider />
+      {/* <HomeSlider /> */}
+      <SwiperSlider />
     </div>
   )
 }

@@ -1,18 +1,22 @@
-import { useContext, useEffect } from 'react';
-import Children1 from '../../component/childrens/children1';
-import { GlobalContext } from '../../component/context/global-context';
+import { useCallback } from "react";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux"
+import { setCount } from "../../redux/count-slice/count";
 
 const Pricing = () => {
 
-  const { setName } = useContext(GlobalContext);
+  const dispatch = useAppDispatch();
+  const count = useAppSelector((state) => state.count.count);
 
-  useEffect(() => {
-    setName("This is parent Name")
-  }, [setName])
+  const handleCount
+    = useCallback(() => {
+      dispatch(setCount({ count: count + 1 }))
+    }, [dispatch, count])
 
   return (
     <div>
-      <Children1 />
+      <button type="button" onClick={handleCount}>
+        Count {count}
+      </button>
     </div>
   )
 }
