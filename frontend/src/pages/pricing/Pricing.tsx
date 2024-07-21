@@ -13,10 +13,11 @@ const Pricing = () => {
     }, [dispatch, count])
 
   return (
-    <div>
+    <div className="flex flex-col justify-center items-center h-screen gap-10">
       <button type="button" onClick={handleCount}>
-        Count {count}
+        Count
       </button>
+      <h3 className="text-5xl font-bold">{count}</h3>
     </div>
   )
 }

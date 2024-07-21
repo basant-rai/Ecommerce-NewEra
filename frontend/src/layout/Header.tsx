@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import Button from '../component/reusable/button/button';
 import { useEffect, useState } from 'react';
+import { useAppSelector } from '../hooks/redux';
 
 // conditional statement
 //  let age =12;
@@ -28,13 +29,15 @@ const NavItems = [
 
 const Header = () => {
 
+  const count = useAppSelector((state) => state.count.count)
+
   const location = useLocation();
   const [isLogin, setIsLogin] = useState(false);
 
   useEffect(() => {
     if (location.pathname === "/login") {
       setIsLogin(true);
-    }else{
+    } else {
       setIsLogin(false);
     }
   }, [location]);
@@ -85,6 +88,15 @@ const Header = () => {
               rounded
             >
               Register
+            </Button>
+          </Link>
+          <Link to="/dashboard">
+            <Button
+              buttonType={"button"}
+              buttonColor={{ secondary: true }}
+              rounded
+            >
+              Dashboard
             </Button>
           </Link>
         </div>
