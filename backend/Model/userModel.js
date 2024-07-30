@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-export const UserSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true
@@ -8,6 +8,14 @@ export const UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true
+  },
+  role: {
+    type: String,
+    default: "admin"
+  },
+  isVerified: {
+    type: Boolean,
+    default: false
   },
   userDetail: {
     firstName: {
@@ -31,5 +39,5 @@ export const UserSchema = new mongoose.Schema({
   }
 });
 
-export default mongoose.model('User', UserSchema);
+module.exports = mongoose.model('User', UserSchema);
 

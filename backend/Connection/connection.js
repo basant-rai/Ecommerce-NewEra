@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const { ServerConfig } = require('../config/server.config')
 
 // 
-mongoose.connect(ServerConfig.DATABASE, {
+mongoose.connect(process.env.DATABASE, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
