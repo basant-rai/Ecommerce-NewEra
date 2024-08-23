@@ -1,11 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import Button from '../component/reusable/button/button';
 import { useEffect, useState } from 'react';
-import { useAppSelector } from '../hooks/redux';
-
-// conditional statement
-//  let age =12;
-// age >= 12 ? true : false
+import { useAuth } from '../hooks/useAuth';
 
 const NavItems = [
   {
@@ -28,8 +24,7 @@ const NavItems = [
 
 
 const Header = () => {
-
-  const count = useAppSelector((state) => state.count.count)
+  const { accessToken } = useAuth();
 
   const location = useLocation();
   const [isLogin, setIsLogin] = useState(false);
@@ -72,33 +67,38 @@ const Header = () => {
           </ul>
         </div>
         <div className='flex gap-2 items-center'>
-          <Link to="/login">
-            <Button
-              buttonType={"button"}
-              buttonColor={isLogin ? { primary: true } : { outline: true }}
-              rounded
-            >
-              Sign in
-            </Button>
-          </Link>
-          <Link to="/register">
-            <Button
-              buttonType={"button"}
-              buttonColor={!isLogin ? { primary: true } : { outline: true }}
-              rounded
-            >
-              Register
-            </Button>
-          </Link>
-          <Link to="/dashboard">
-            <Button
-              buttonType={"button"}
-              buttonColor={{ secondary: true }}
-              rounded
-            >
-              Dashboard
-            </Button>
-          </Link>
+          {
+            !accessToken ?
+              <>
+                <Link to="/login">
+                  <Button
+                    buttonType={"button"}
+                    buttonColor={isLogin ? { primary: true } : { outline: true }}
+                    rounded
+                  >
+                    Sign in
+                  </Button>
+                </Link>
+                <Link to="/register">
+                  <Button
+                    buttonType={"button"}
+                    buttonColor={!isLogin ? { primary: true } : { outline: true }}
+                    rounded
+                  >
+                    Register
+                  </Button>
+                </Link>
+              </> :
+              <Link to="/dashboard">
+                <Button
+                  buttonType={"button"}
+                  buttonColor={{ secondary: true }}
+                  rounded
+                >
+                  Dashboard
+                </Button>
+              </Link>
+          }
         </div>
       </div>
     </nav>

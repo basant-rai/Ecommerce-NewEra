@@ -5,7 +5,7 @@ const Product = () => {
   return (
     <div>
       <Products />
-      <ProductWithContext/>
+      {/* <ProductWithContext/> */}
     </div>
   )
 }

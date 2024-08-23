@@ -40,7 +40,6 @@ exports.CreateUser = async (req, res) => {
 
   // Send email
   const url = `${process.env.APP_URL}/confirm-email/${token}`
-
   const mailOptions = {
     userEmail: req.body.email,
     subject: "Email verification",
@@ -122,7 +121,7 @@ exports.logIn = async (req, res) => {
 
 
   if (!checkUser) {
-    return res.json({ error: "User not found" }).status(400);
+    return res.status(400).json({ error: "User not found" });
   }
 
   if (!checkUser.isVerified) {
@@ -140,13 +139,13 @@ exports.logIn = async (req, res) => {
   )
 
   if (!checkPassword) {
-    return res.json({ error: "Password is invalid" }).status(400);
+    return res.status(400).json({ error: "Password is invalid" });
   }
-  return res.json({
-    message: "Login successfull",
+  return res.status(201).json({
+    message: "Login successful",
     accessToken: access_token,
     user: checkUser
-  }).status(201);
+  });
 }
 
 // ---------------------------------------Get User By Id--------------------------
@@ -162,10 +161,10 @@ exports.getUserById = async (req, res) => {
   const user = await UserModel.findById(id);
 
   if (!user) {
-    return res.json({ error: "User not  found" }).status(400);
+    return res.status(400).json({ error: "User not  found" });
   }
 
-  return res.json({ user: user }).status(200);
+  return res.status(400).json({ user: user }).status(200);
 }
 
 //----------------------------------Delete User--------------------------------------
@@ -178,13 +177,111 @@ exports.deleteUser = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ error: "Invalid ID" });
   }
+  if (!user) {
+    return res.json({ error: "User not found" }).status(400);
+  }
+  return res.json({ message: "Account deactivated" }).status(200);
+}
+
+// -----------------------------------forgot password---------------------------------
+
+exports.forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  const user = await UserModel.findOne({ email: email });
 
   if (!user) {
     return res.json({ error: "User not found" }).status(400);
   }
 
-  return res.json({ message: "Account deactivated" }).status(200);
+  // Generate token for email verification
+  const token = await jwt.sign(
+    {
+      email: email,
+      id: user._id
+    }, SECRETKEY,
+    { expiresIn: "1h" }
+  )
+
+  if (!token) {
+    return res.status(400).json({ error: "Failed to generate token" });
+  }
+
+  // Send email
+  const url = `${process.env.APP_URL}/reset-password/${token}`
+  const mailOptions = {
+    userEmail: email,
+    subject: "Reset password",
+    text: "Reset password",
+    html: `<a href="${url}"><button>Reset Password</button></a>`
+  }
+  sendEmail(mailOptions);
+
+  return res.status(200).json({ message: "Reset link has been sent to your email" })
+}
+
+// -----------------------------------Reset password----------------------------------
+exports.resetPassword = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  const { email, id } = jwt.decode(token);
+
+  const user = await UserModel.findOne({ email: email });
+
+  if (!user) {
+    return res.json({ error: "User not found" }).status(400);
+  }
+
+  const hashPassword = await bcrypt.hash(password, 10);
+  user.password = hashPassword;
+
+  await user.save();
+
+  if (!user) {
+    return res.json({ error: "Password not saved" }).status(400);
+  }
+
+  return res.json({ message: "Password reset successfully" }).status(200);
 
 }
 
+// -----------------------------------resend confirmation----------------------------------
 
+exports.resendConfirmation = async (req, res) => {
+  const { email } = req.body;
+
+  const user = await UserModel.findOne({ email: email });
+
+  if (!user) {
+    return res.json({ error: "User not found" }).status(400);
+  }
+
+  if (user.isVerified) {
+    return res.json({ error: "User already verified" }).status(400);
+
+  }
+  // Generate token for email verification
+  const token = await jwt.sign(
+    {
+      email: email
+    }, SECRETKEY,
+    { expiresIn: "1h" }
+  )
+
+  if (!token) {
+    return res.status(400).json({ error: "Failed to generate token" });
+  }
+
+  // Send email
+  const url = `${process.env.APP_URL}/confirm-email/${token}`
+  const mailOptions = {
+    userEmail: email,
+    subject: "Resend email verification",
+    text: "Please verify your email",
+    html: `<a href="${url}"><button>Verify Account</button></a>`
+  }
+  sendEmail(mailOptions);
+
+  return res.status(200).json({ message: "Confirmation link has been sent to your email" })
+
+}

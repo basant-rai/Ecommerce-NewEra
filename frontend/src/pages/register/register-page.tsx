@@ -5,6 +5,10 @@ import React, { useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import Button from '../../component/reusable/button/button'
+import axios from "axios";
+import { AppConfig } from "../../config/app.config";
+import { toast } from "sonner";
+import { errorMessage } from "../../utils/helper";
 
 
 interface IRegisterForm {
@@ -42,10 +46,23 @@ const RegisterPage = () => {
     resolver: yupResolver(registerValidation),
   });
 
-  
-
-  const onRegister = useCallback((values: IRegisterForm) => {
-    console.log(values);
+  // register function
+  const onRegister = useCallback(async (values: IRegisterForm) => {
+    try {
+      const { data } = await axios.post(`${AppConfig.API_URL}/register`,
+        {
+          email: values.email,
+          firstName: values.first_name,
+          lastName: values.last_name,
+          password: values.password,
+          phoneNumber: values.phone_number
+        }
+      )
+      console.log(data)
+      toast.success(data.response?.message || "Register successfully")
+    } catch (error: unknown) {
+      toast.error(errorMessage(error))
+    }
   }, [])
 
   return (

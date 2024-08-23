@@ -7,7 +7,7 @@ const ProductWithContext = () => {
   
   return (
     <div className="grid grid-cols-4 gap-10 p-10">
-      {
+      {/* {
         products?.map((product) => (
           <div key={product.id} className="border p-5 rounded-lg space-y-5">
             <div className="flex items-center justify-center">
@@ -27,7 +27,7 @@ const ProductWithContext = () => {
             </div>
           </div>
         ))
-      }
+      } */}
     </div>
   )
 }
