@@ -8,7 +8,7 @@ import { useAuth } from '../../hooks/useAuth'
 /**
  * 
  */
-const AuthLayout = () => {
+const AdminLayout = () => {
   const navigate = useNavigate();
   const { accessToken, role } = useAuth();
 
@@ -16,16 +16,14 @@ const AuthLayout = () => {
     if (!accessToken || accessToken === undefined) {
       navigate('/login')
     }
-  }, [accessToken, navigate]);
+    if (accessToken && role === "user") {
+      navigate('/user-dashboard')
+    }
+  }, [accessToken, navigate, role]);
 
   return (
-    <div className="w-full flex">
-      <SideBar role={role} />
-      <div className='ml-60 w-full overflow-hidden'>
-        <Outlet />
-      </div>
-    </div>
+    <Outlet />
   )
 }
 
-export default AuthLayout
+export default AdminLayout

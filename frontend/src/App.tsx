@@ -19,6 +19,10 @@ import CategoryPage from "./pages/dashboard/category/get-category";
 import OrderPage from "./pages/dashboard/orders/get-order";
 import CustomerPage from "./pages/dashboard/customers/get-customer";
 import UpdateProductPage from "./pages/dashboard/product/update-product/update-product";
+import UserLayout from "./layout/user-layout/userLayout";
+import AdminLayout from "./layout/user-layout/admin-layout";
+import UserDashboard from "./pages/dashboard/user-dashboard/UserDashboard";
+import Cart from "./pages/dashboard/carts/Cart";
 
 
 const App = () => {
@@ -44,21 +48,32 @@ const App = () => {
 
         {/* Authentication layout */}
         <Route element={<AuthLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
 
-          {/* product */}
-          <Route path="/dashboard/products" element={<GetProduct />} />
-          <Route path="/dashboard/add-product" element={<AddProductForm />} />
-          <Route path="/dashboard/update-product/:id" element={<UpdateProductPage />} />
+          {/* Admin layout */}
+          <Route element={<AdminLayout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
 
-          {/* category */}
-          <Route path="/dashboard/category" element={<CategoryPage />} />
+            {/* product */}
+            <Route path="/dashboard/products" element={<GetProduct />} />
+            <Route path="/dashboard/add-product" element={<AddProductForm />} />
+            <Route path="/dashboard/update-product/:id" element={<UpdateProductPage />} />
 
-          {/* Orders */}
-          <Route path="/dashboard/orders" element={<OrderPage />} />
+            {/* category */}
+            <Route path="/dashboard/category" element={<CategoryPage />} />
 
-          {/* customers */}
-          <Route path="/dashboard/customers" element={<CustomerPage />} />
+            {/* Orders */}
+            <Route path="/dashboard/orders" element={<OrderPage />} />
+
+            {/* customers */}
+            <Route path="/dashboard/customers" element={<CustomerPage />} />
+          </Route>
+
+          {/* User layout */}
+          <Route element={<UserLayout />}>
+            <Route path="/user-dashboard" element={<UserDashboard />} />
+            <Route path="/carts" element={<Cart />} />
+          </Route>
+
         </Route>
       </Routes>
     </Router>

@@ -38,11 +38,22 @@ const Login = () => {
         email: values.email,
         password: values.password
       })
-      
+
       Cookie.set('accessToken', data.accessToken);
       Cookie.set('userId', data.user._id);
+      Cookie.set('role', data.user.role);
 
-      navigate('/dashboard')
+      switch (data.user.role) {
+        case "admin":
+          navigate('/dashboard')
+          break;
+        case "user":
+          navigate('/user-dashboard')
+          break;
+        default:
+          break;
+      }
+
       toast.success(data.message || "Login successfully")
     } catch (error) {
       toast.error(errorMessage(error))

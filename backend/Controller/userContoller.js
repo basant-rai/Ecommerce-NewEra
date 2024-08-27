@@ -63,7 +63,7 @@ exports.CreateUser = async (req, res) => {
   if (!saveUser) {
     return res.status(400).json({ error: "User registration failed" });
   } else {
-    return res.status(200).json({ message: "User registration succesful, Please verify your email" })
+    return res.status(200).json({ message: "User registration successful, Please verify your email" })
   }
 }
 
@@ -72,7 +72,6 @@ exports.confirmUser = async (req, res) => {
   const { token } = req.params
 
   const { email, name } = jwt.decode(token);
-  console.log(email)
 
   const user = await UserModel.findOne({ email: email });
 
@@ -133,7 +132,8 @@ exports.logIn = async (req, res) => {
     {
       name: checkUser.userDetail.firstName,
       id: checkUser._id,
-      email: checkUser.email
+      email: checkUser.email,
+      role: checkUser.role
     }, SECRETKEY,
     { expiresIn: "1d" }
   )

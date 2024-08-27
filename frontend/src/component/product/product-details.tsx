@@ -1,7 +1,20 @@
+import { useCallback } from "react";
+import { toast } from "sonner";
 import useSWR from "swr";
+import axios from "axios";
+
 import { getProductById } from "../../API/productApi";
-import { displayImage } from "../../utils/helper";
+
+
+import { displayImage, errorMessage } from "../../utils/helper";
 import RelatedProducts from "./related-products";
+import Button from "../reusable/button/button";
+
+// 
+import { useAppDispatch } from "../../hooks/redux";
+import { addProductToCart } from "../../redux/slice/order-slice";
+import { useAuth } from "../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   id: string
@@ -9,6 +22,24 @@ interface Props {
 
 const ProductDetail = ({ id }: Props) => {
   const { data: product } = useSWR(`product/${id}`, getProductById);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const { accessToken } = useAuth()
+
+  const handleAddToCart = useCallback(async () => {
+    const product = {
+      productId: id,
+      totalOrder: 1
+    }
+    if (accessToken) {
+      dispatch(addProductToCart(product))
+      toast.message("Added to cart")
+    } else {
+      toast.error('Please login')
+      navigate('/login')
+    }
+  }, [accessToken, dispatch, id, navigate])
 
   return (
     <div>
@@ -27,6 +58,13 @@ const ProductDetail = ({ id }: Props) => {
           <p><span className="font-bold">Price:</span>${product?.productPrice}</p>
           <p className="">{product?.productDescription}</p>
         </div>
+        <Button
+          buttonType="button"
+          buttonColor={{ primary: true }}
+          onClick={handleAddToCart}
+        >
+          Add to cart
+        </Button>
       </div>
       <RelatedProducts id={id} />
     </div>
