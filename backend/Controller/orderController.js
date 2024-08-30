@@ -59,23 +59,23 @@ exports.getOrderByUser = async (req, res) => {
 }
 
 exports.updateOrderedProduct = async (req, res) => {
-  const { orderId } = req.params
+  const { orderId: _id } = req.params
   const { totalOrder } = req.body;
-  if (orderId) {
-    if (totalOrder <= 0) {
-      const order = await OrderModel.findByIdAndDelete(orderId)
-      res.status(200).json({ message: "Order has been deleted" })
-    }
-    else {
-      const updateOrder = {
-        totalOrder: totalOrder
-      }
-      const order = await OrderModel.findByIdAndUpdate({ _id: orderId, updateOrder })
-      if (!order) {
-        res.status(400).json({ error: "Order not found" })
-      }
-      res.status(200).json({ message: "Order has been updated" })
-    }
+  
+  const order = await OrderModel.findByIdAndUpdate(
+    _id,
+    { totalOrder },
+    { new: true }
+  );
+  if (!order) {
+    return res.status(400).json({ error: "Order not found" })
   }
-  res.status(400).json({ error: "Order not found" })
+  const updateOrder = await order.populate("product")
+  res.send(updateOrder)
+}
+
+exports.deleteOrderedProduct = async (req, res) => {
+  const { orderId: _id } = req.params
+  const order = await OrderModel.findByIdAndDelete(_id);
+  return res.status(200).json({ error: "Order deleted successfully" })
 }

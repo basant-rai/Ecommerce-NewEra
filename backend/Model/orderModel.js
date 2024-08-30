@@ -9,7 +9,6 @@ const orderSchema = new mongoose.Schema({
   product: {
     type: ObjectId,
     ref: 'Product',
-    required: true
   },
   totalOrder: {
     type: Number

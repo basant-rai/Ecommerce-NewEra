@@ -1,7 +1,16 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
+import { toast } from "sonner";
+
+// 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../@/components/ui/table"
+import { getOrderProducts, setRemoveProduct, updateProductToCart } from "../../../redux/slice/order-slice";
 import { useAppDispatch, useAppSelector } from "../../../hooks/redux"
-import { getOrderProducts } from "../../../redux/slice/order-slice";
+
+// 
+import { IOrder } from "../../../interface/order";
+import axios from "axios";
+import { errorMessage } from "../../../utils/helper";
+import { AppConfig } from "../../../config/app.config";
 
 
 const Cart = () => {
@@ -11,6 +20,39 @@ const Cart = () => {
 
   useEffect(() => {
     dispatch(getOrderProducts())
+  }, [dispatch])
+
+  const increaseOrder = useCallback((order: IOrder) => {
+    let product = order.totalOrder
+
+    const update = {
+      orderId: order._id,
+      totalOrder: product + 1
+    }
+
+    dispatch(updateProductToCart(update))
+    toast.success("Updated to cart")
+  }, [dispatch])
+
+  /* ************************************* Decrease and delete products ***************************************** */
+  const decreaseOrder = useCallback(async (order: IOrder) => {
+    let product = order.totalOrder
+    if (product > 0) {
+      const update = {
+        orderId: order._id,
+        totalOrder: product - 1
+      }
+      dispatch(updateProductToCart(update))
+      toast.success("Updated to cart")
+    } else {
+      try {
+        await axios.delete(`${AppConfig.API_URL}/delete-order/${order._id}`)
+      } catch (error) {
+        toast.error(errorMessage(error))
+      }
+      dispatch(setRemoveProduct(order))
+      toast.success("Deleted from cart")
+    }
   }, [dispatch])
 
   return (
@@ -23,7 +65,7 @@ const Cart = () => {
             <TableHead>Total amount</TableHead>
             <TableHead>Total order</TableHead>
             <TableHead className="w-[200px]">Action</TableHead>
-          </TableRow> 
+          </TableRow>
         </TableHeader>
         <TableBody>
           {orderProducts.map((order) => (
@@ -33,17 +75,21 @@ const Cart = () => {
               <TableCell>{Number(order?.product?.productPrice) * Number(order?.totalOrder)}</TableCell>
               <TableCell className="">{order?.totalOrder}</TableCell>
               <TableCell>
-                <div className="flex items-center border w-[150px] rounded-[6px] overflow-hidden">
+                <div
+                  className="flex items-center border w-[150px] rounded-[6px] overflow-hidden"
+                >
                   <button
                     type="button"
                     className="bg-red-700 px-4 py-1 text-white text-xl font-bold w-full"
+                    onClick={() => decreaseOrder(order)}
                   >
                     -
                   </button>
-                  <span className="px-2 w-full text-center">0</span>
+                  <span className="px-2 w-full text-center">{order.totalOrder}</span>
                   <button
                     type="button"
                     className="bg-blue-900 px-4 py-1 text-white text-xl font-bold w-full"
+                    onClick={() => increaseOrder(order)}
                   >
                     +
                   </button>

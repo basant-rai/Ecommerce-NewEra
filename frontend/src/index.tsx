@@ -5,7 +5,6 @@ import { Toaster } from 'sonner';
 // 
 import "./index.css";
 import App from './App';
-// import GlobalContextProvider from './component/context/global-context';
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
 
@@ -16,7 +15,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <Toaster position="top-right" />
+      <Toaster position="bottom-right" />
       <App />
     </Provider>
   </React.StrictMode>
