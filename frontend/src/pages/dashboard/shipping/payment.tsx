@@ -18,6 +18,7 @@ interface PaymentFormProps {
   orderId: string
 }
 
+/* ********************************* Stripe Payment *********************************** */
 const PaymentForm: React.FC<PaymentFormProps> = ({ clientSecret, orderId }) => {
   const stripe = useStripe();
   const elements = useElements();
@@ -72,6 +73,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ clientSecret, orderId }) => {
   );
 };
 
+/* ****************************** Payment **************************** */
 const Payment = ({ orderId }: Props) => {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
 
