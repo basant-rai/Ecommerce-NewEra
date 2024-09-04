@@ -3,13 +3,28 @@ import axios from "axios";
 import { AppConfig } from "../../config/app.config";
 import { useAuth } from "../../hooks/useAuth";
 import { IOrder } from "../../interface/order";
+import { IProduct } from "../../interface/product";
+import { IUser } from "../../interface/user";
+
+
+export interface IOrderRequest {
+  _id: string
+  orderStatus: 'shipping' | 'payment' | 'delivered' | 'cancelled'
+  products: IProduct[]
+  shippingAddress: {
+    user: IUser,
+    address: string
+  }
+}
 
 interface IInitialState {
   orderProducts: IOrder[]
+  orderRequest: IOrderRequest | null
 }
 
 const initialState: IInitialState = {
-  orderProducts: []
+  orderProducts: [],
+  orderRequest: null
 }
 
 export const getOrderProducts = createAsyncThunk(
@@ -89,6 +104,27 @@ export const updateProductToCart = createAsyncThunk(
   }
 )
 
+export const getOrderRequest = createAsyncThunk(
+  'order-request',
+  async () => {
+    const { userId } = useAuth()
+    try {
+      const { data } = await axios.get(`${AppConfig.API_URL}/order-request/${userId}`)
+      return {
+        success: true,
+        message: "Successful",
+        data
+      }
+
+    } catch (error) {
+      return {
+        success: false,
+        message: "Failed to get orders"
+      }
+    }
+  }
+)
+
 
 /**
  * 
@@ -123,6 +159,9 @@ export const OrderSlice = createSlice({
           }
         }
       }
+    })
+    builder.addCase(getOrderRequest.fulfilled, (state, action) => {
+      state.orderRequest = action.payload.data
     })
   },
 })

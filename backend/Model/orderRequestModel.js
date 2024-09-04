@@ -16,8 +16,8 @@ const orderRequestSchema = new mongoose.Schema({
   },
   orderStatus: {
     type: String,
-    default: 'request',
-    // enum: ['request' | 'shipping' | 'payment' | 'delivered' | 'cancelled']
+    default: 'shipping',
+    enum: ['shipping', 'payment', 'delivered', 'cancelled']
   },
   shippingAddress: {
     user: {
@@ -30,7 +30,6 @@ const orderRequestSchema = new mongoose.Schema({
   },
   stripePaymentIntentId: {
     type: String,
-    // required: true,  // This ID is returned by Stripe when creating a payment intent
   },
   stripeChargeId: {
     type: String,
