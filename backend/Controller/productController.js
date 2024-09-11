@@ -1,8 +1,7 @@
 const ProductModel = require("../Model/productModel");
 
-
 exports.addProduct = async (req, res) => {
-  const { productName, productPrice, productDescription, productRating, productCategory, totalProduct } = req.body;
+  const { productName, productPrice, productDescription, productRating, productCategory, totalProduct, tags } = req.body;
 
   const addProduct = new ProductModel({
     productName: productName,
@@ -11,7 +10,8 @@ exports.addProduct = async (req, res) => {
     productRating: productRating,
     productCategory: productCategory,
     productImage: req.file.path,
-    totalProduct: totalProduct
+    totalProduct: totalProduct,
+    tags
   });
 
   addProduct.save();
@@ -41,30 +41,26 @@ exports.getAllProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   const { id } = req.params
-  const { productName, productPrice, productDescription, productRating, productCategory, totalProduct } = req.body;
-  console.log("🚀 ~ exports.updateProduct= ~ req.body:", req.body)
-
-
-  const product = {
+  const { productName, productPrice, productDescription, productRating, productCategory, totalProduct, tags } = req.body;
+  console.log("🚀 ~ exports.updateProduct= ~ tags:", tags)
+  const productUpdates = {
     productName: productName,
     productPrice: productPrice,
     productDescription: productDescription,
     productRating: productRating,
     productCategory: productCategory,
-    // productImage: req.file.path ,
+    tags,
     totalProduct: totalProduct
   }
 
-  if (!id) {
-    return res.json({ error: "Id not found" }).status(400);
-  }
-  const updateProduct = await ProductModel.findByIdAndUpdate(id, product);
+   // Update the product in the database
+   const updatedProduct = await ProductModel.findByIdAndUpdate(id, productUpdates, { new: true });
 
-  if (!updateProduct) {
-    return res.json({ error: "Failed to update product" }).status(400);
-  }
+   if (!updatedProduct) {
+     return res.status(404).json({ error: "Product not found" });
+   }
 
-  return res.json({ message: "All products", data: updateProduct }).status(200);
+  return res.json({ message: "All products", data: updatedProduct }).status(200);
 }
 
 
@@ -81,15 +77,26 @@ exports.deleteProduct = async (req, res) => {
 
 exports.relatedProduct = async (req, res) => {
   const { id } = req.params;
-  const products = await ProductModel.find({
-    _id: { $ne: id }
-  });
+  try {
+    const product = await ProductModel.findById(id);
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+    const relatedProducts = await ProductModel.find({
+      _id: { $ne: id }, // Exclude the current product
+      productCategory: product.productCategory // Match the same category
+    });
 
-  if (!products) {
-    return res.json({ error: "Failed to get product" }).status(400);
+    if (!relatedProducts || relatedProducts.length === 0) {
+      return res.status(404).json({ error: "No related products found" });
+    }
+
+    res.status(200).json(relatedProducts);
+  } catch (error) {
+    console.error("Error fetching related products:", error);
+    res.status(500).json({ error: "Failed to fetch related products" });
   }
-  res.send(products);
-}
+};
 
 exports.getProductById = async (req, res) => {
   const { id } = req.params;

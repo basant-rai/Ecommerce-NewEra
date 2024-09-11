@@ -24,6 +24,7 @@ import AdminLayout from "./layout/user-layout/admin-layout";
 import UserDashboard from "./pages/dashboard/user-dashboard/UserDashboard";
 import Cart from "./pages/dashboard/carts/Cart";
 import Shipping from "./pages/dashboard/shipping/shipping";
+import OrderRequests from "./pages/dashboard/shipping/order-requests";
 
 
 const App = () => {
@@ -73,7 +74,9 @@ const App = () => {
           <Route element={<UserLayout />}>
             <Route path="/user-dashboard" element={<UserDashboard />} />
             <Route path="/carts" element={<Cart />} />
-            <Route path="/shipping" element={<Shipping />} />
+
+            <Route path="/shipping" element={<OrderRequests />} />
+            <Route path="/shipping/:id" element={<Shipping />} />
           </Route>
 
         </Route>

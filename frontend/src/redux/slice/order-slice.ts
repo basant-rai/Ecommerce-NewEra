@@ -15,16 +15,19 @@ export interface IOrderRequest {
     user: IUser,
     address: string
   }
+  stripePaymentIntentId:string
 }
 
 interface IInitialState {
   orderProducts: IOrder[]
   orderRequest: IOrderRequest | null
+  orderRequests: IOrderRequest[]
 }
 
 const initialState: IInitialState = {
   orderProducts: [],
-  orderRequest: null
+  orderRequest: null,
+  orderRequests: []
 }
 
 export const getOrderProducts = createAsyncThunk(
@@ -109,7 +112,27 @@ export const getOrderRequest = createAsyncThunk(
   async () => {
     const { userId } = useAuth()
     try {
-      const { data } = await axios.get(`${AppConfig.API_URL}/order-request/${userId}`)
+      const { data } = await axios.get(`${AppConfig.API_URL}/order-request/user/${userId}`)
+      return {
+        success: true,
+        message: "Successful",
+        data
+      }
+
+    } catch (error) {
+      return {
+        success: false,
+        message: "Failed to get orders"
+      }
+    }
+  }
+)
+
+export const getOrderRequestById = createAsyncThunk(
+  'order-request-by-id',
+  async (id: string) => {
+    try {
+      const { data } = await axios.get(`${AppConfig.API_URL}/order-request/${id}`)
       return {
         success: true,
         message: "Successful",
@@ -161,6 +184,9 @@ export const OrderSlice = createSlice({
       }
     })
     builder.addCase(getOrderRequest.fulfilled, (state, action) => {
+      state.orderRequests = action.payload.data as IOrderRequest[]
+    })
+    builder.addCase(getOrderRequestById.fulfilled, (state, action) => {
       state.orderRequest = action.payload.data
     })
   },

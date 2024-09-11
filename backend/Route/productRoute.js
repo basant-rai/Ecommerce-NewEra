@@ -1,6 +1,7 @@
 const express = require("express");
 const { addProduct, getAllProduct, relatedProduct, updateProduct, getProductById, deleteProduct } = require("../Controller/productController");
 const upload = require("../utils/upload");
+const { getRecommendations } = require("../algorithm/filtering");
 
 // 
 const router = express.Router();
@@ -11,6 +12,9 @@ router.put("/update-product/:id", upload.single('productImage'), updateProduct);
 router.get("/related-products/:id", relatedProduct);
 router.get("/product/:id", getProductById);
 router.delete("/product/:id", deleteProduct);
+
+router.get("/recommend-product/:userId", getRecommendations);
+
 
 
 module.exports = router;

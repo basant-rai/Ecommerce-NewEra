@@ -1,36 +1,15 @@
-import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
-import { IProduct } from "../../interface/product"
-import { AppConfig } from "../../config/app.config"
-import useSWR from "swr"
-import { getProducts } from "../../API/productApi"
-import StarRating from "../ratings/rating"
+import useSWR from 'swr';
+import { getRecommendedProduct } from '../../API/productApi';
+import { displayImage } from '../../utils/helper';
+import { Link } from 'react-router-dom';
+import StarRating from '../ratings/rating';
 
-const Products = () => {
-  // const [products, setProducts] = useState<IProduct[]>([])
+interface Props {
+  userId: string
+}
 
-  // useEffect(() => {
-
-  //   const getProducts = async () => {
-  //     try {
-  //       const res = await fetch(`${AppConfig.API_URL}/products`);
-  //       const products = await res.json();
-  //       console.log("🚀 ~ getProducts ~ products:", products)
-
-  //       setProducts(products)
-  //     } catch (error: any) {
-  //       console.log(error)
-  //     }
-  //   }
-
-  //   getProducts();
-
-  // }, [])
-
-  const { data: products } = useSWR('products', getProducts)
-
-  console.log(products);
-
+const RecommendProducts = ({ userId }: Props) => {
+  const { data: products } = useSWR(`recommend-product/${userId}`, getRecommendedProduct);
 
   return (
     <div className="grid grid-cols-4 gap-10 p-10">
@@ -39,7 +18,7 @@ const Products = () => {
           <div key={product._id} className="border p-5 rounded-lg space-y-5">
             <div className="flex items-center justify-center">
               <img
-                src={`${product?.productImage}`}
+                src={product?.productImage || displayImage(product.productImage)}
                 alt={product.productName}
                 className="h-32 w-32"
               />
@@ -65,4 +44,4 @@ const Products = () => {
   )
 }
 
-export default Products
+export default RecommendProducts

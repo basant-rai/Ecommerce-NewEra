@@ -82,6 +82,7 @@ const Cart = () => {
       })
       console.log("🚀 ~ handleCreateOrderRequest ~ data:", data)
       toast.success("Order requested successfully")
+      
     } catch (error) {
       toast.error(errorMessage(error))
     }

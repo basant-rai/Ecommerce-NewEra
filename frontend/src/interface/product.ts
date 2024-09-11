@@ -3,7 +3,7 @@ export interface IProduct {
   productDescription: string,
   productName: string,
   productPrice: string,
-  productRating: string,
+  productRating: number,
   totalProduct: number
   createdAt: string
   productImage: string

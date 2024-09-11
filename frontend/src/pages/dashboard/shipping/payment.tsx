@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js';
 import axios from 'axios';
@@ -6,6 +6,10 @@ import { AppConfig } from '../../../config/app.config';
 import Button from '../../../component/reusable/button/button';
 import { toast } from 'sonner';
 import { errorMessage } from '../../../utils/helper';
+import { getOrderRequestById } from '../../../redux/slice/order-slice';
+import { useParams } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
+import { useAuth } from '../../../hooks/useAuth';
 
 const stripePromise = loadStripe(`${AppConfig.STRIPE_PUBLIC_KEY}`);
 
@@ -20,12 +24,23 @@ interface PaymentFormProps {
 
 /* ********************************* Stripe Payment *********************************** */
 const PaymentForm: React.FC<PaymentFormProps> = ({ clientSecret, orderId }) => {
+  const { id } = useParams()
+  const dispatch = useAppDispatch()
+  const { orderRequest } = useAppSelector((store) => store.order)
+  const { userId } = useAuth()
+
+  useEffect(()=>{
+    if (id) {
+      dispatch(getOrderRequestById(id))
+    }
+  },[dispatch, id])
+
   const stripe = useStripe();
   const elements = useElements();
   const [isProcessing, setIsProcessing] = useState(false);
   const [errormessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!stripe || !elements) {
       return;
@@ -36,7 +51,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ clientSecret, orderId }) => {
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `${AppConfig.API_URL}/payment-success`,
+        return_url: `/payment-success`,
       },
     });
 
@@ -45,14 +60,22 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ clientSecret, orderId }) => {
       setErrorMessage(error.message || 'An unexpected error occurred.');
     }
     try {
-      await axios.put(`${AppConfig.API_URL}/order-request/${orderId}`, {
-        orderStatus: "delivered",
-      })
+      if (orderRequest?.stripePaymentIntentId) {
+        await axios.put(`${AppConfig.API_URL}/complete-order`, {
+          requestId: orderId,
+          userId: userId,
+          stripePaymentIntentId: orderRequest?.stripePaymentIntentId
+        })
+        if (id) {
+          dispatch(getOrderRequestById(id))
+        }
+        toast.success("Payment successful")
+      }
     } catch (error) {
       toast.error(errorMessage(error))
     }
     setIsProcessing(false);
-  };
+  }, [dispatch, elements, id, orderId, orderRequest?.stripePaymentIntentId, stripe, userId])
 
   return (
     <form onSubmit={handleSubmit}>

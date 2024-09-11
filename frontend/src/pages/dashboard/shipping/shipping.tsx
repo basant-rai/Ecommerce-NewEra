@@ -8,8 +8,10 @@ import { toast } from "sonner";
 import { errorMessage } from "../../../utils/helper";
 import axios from "axios";
 import { AppConfig } from "../../../config/app.config";
-import { useAppSelector } from "../../../hooks/redux";
+import { useAppDispatch, useAppSelector } from "../../../hooks/redux";
 import Payment from "./payment";
+import { useParams } from "react-router-dom";
+import { getOrderRequestById } from "../../../redux/slice/order-slice";
 
 
 
@@ -29,6 +31,8 @@ const registerValidation = yup.object().shape({
 })
 
 const Shipping = () => {
+  const { id } = useParams()
+  const dispatch = useAppDispatch()
   const { orderRequest } = useAppSelector((store) => store.order)
 
   const {
@@ -46,12 +50,16 @@ const Shipping = () => {
           orderStatus: "payment",
           address: value.address
         })
+        if (id) {
+          dispatch(getOrderRequestById(id))
+        }
+        toast.success("Successful")
         console.log("🚀 ~ handleSubmitShipping ~ data:", data)
       }
     } catch (error) {
       toast.error(errorMessage(error))
     }
-  }, [orderRequest])
+  }, [orderRequest, id, dispatch])
 
   return (
     <div>
@@ -124,6 +132,11 @@ const Shipping = () => {
               </Button>
             </form>
           </div>
+        }
+        {
+
+          orderRequest?.orderStatus === "delivered" &&
+          <div className="text-5xl text-center font-bold">Delivered Successfully</div>
         }
       </div>
     </div>
