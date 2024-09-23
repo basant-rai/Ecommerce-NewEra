@@ -1,7 +1,4 @@
-import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { IProduct } from "../../interface/product"
-import { AppConfig } from "../../config/app.config"
 import useSWR from "swr"
 import { getProducts } from "../../API/productApi"
 import StarRating from "../ratings/rating"

@@ -1,12 +1,11 @@
 import { useCallback } from "react";
 import { toast } from "sonner";
 import useSWR from "swr";
-import axios from "axios";
 
 import { getProductById } from "../../API/productApi";
 
 
-import { displayImage, errorMessage } from "../../utils/helper";
+import { displayImage } from "../../utils/helper";
 import RelatedProducts from "./related-products";
 import Button from "../reusable/button/button";
 
@@ -82,7 +81,9 @@ const ProductDetail = ({ id }: Props) => {
       {
         accessToken !== undefined &&
           userId && userId !== undefined ?
+          // COLLABORATIVE FILTERING
           <RecommendProducts userId={userId} /> :
+          // Content BASED FILTERING
           <RelatedProducts id={id} />
       }
     </div>

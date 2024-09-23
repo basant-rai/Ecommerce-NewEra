@@ -33,7 +33,9 @@ const RecommendProducts = ({ userId }: Props) => {
               <p className="line-clamp-2">{product.productDescription}</p>
             </div>
             <div>
-              <Link className="bg-red-500 text-white px-4 py-2 rounded-lg " to={`/products/${product._id}`}>
+              <Link
+                className="bg-red-500 text-white px-4 py-2 rounded-lg "
+                to={`/products/${product._id}`}>
                 View Details
               </Link>
             </div>

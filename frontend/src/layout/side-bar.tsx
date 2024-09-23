@@ -1,12 +1,13 @@
 import {
   Home,
-  LineChart,
   Package,
   Package2,
   ShoppingCart,
   Users,
 } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import Button from "../component/reusable/button/button"
+import Cookies from "js-cookie"
 
 interface Props {
   role?: string
@@ -14,8 +15,16 @@ interface Props {
 
 
 export function SideBar({ role }: Props) {
+  const navigate = useNavigate()
+  const logOut = () => {
+    Cookies.remove("userId")
+    Cookies.remove("role")
+    Cookies.remove("accessToken")
+    navigate('/login')
+  }
   return (
     <div className="fixed w-[240px] bg-white h-screen">
+
       <div className="hidden border-r md:block h-full">
         <div className="flex h-full max-h-screen flex-col gap-2">
           <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
@@ -94,8 +103,22 @@ export function SideBar({ role }: Props) {
               }
             </nav>
           </div>
+          <div className="mb-10 p-4 w-full">
+
+            <Button
+              buttonType={"button"}
+              className="w-full"
+              onClick={logOut}
+              buttonColor={{
+                secondary: true,
+              }}>
+              Logout
+            </Button>
+          </div>
         </div>
+
       </div>
+
     </div>
   )
 }

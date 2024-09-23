@@ -17,3 +17,4 @@ export function displayImage(path?: string) {
   const imageUrl = `${AppConfig.IMAGE_URL}/${path}`
   return imageUrl;
 }
+
