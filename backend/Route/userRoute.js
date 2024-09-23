@@ -9,7 +9,7 @@ router.post('/login', logIn);
 router.post('/register', CreateUser);
 router.get('/users', getAllUser);
 router.put('/update-user/:id', jwtMiddleware, updateUser);
-router.get('/getuser/:id', jwtMiddleware, getUserById);
+router.get('/getuser/:id', getUserById);
 router.delete('/delete/:id', jwtMiddleware, deleteUser);
 router.get('/confirm-email/:token', confirmUser);
 router.post('/forgot-password/', forgotPassword);

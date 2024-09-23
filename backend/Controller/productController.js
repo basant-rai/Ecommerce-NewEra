@@ -42,15 +42,14 @@ exports.getAllProduct = async (req, res) => {
 exports.updateProduct = async (req, res) => {
   const { id } = req.params
   const { productName, productPrice, productDescription, productRating, productCategory, totalProduct, tags } = req.body;
-  console.log("🚀 ~ exports.updateProduct= ~ tags:", tags)
   const productUpdates = {
     productName: productName,
     productPrice: productPrice,
     productDescription: productDescription,
     productRating: productRating,
     productCategory: productCategory,
+    totalProduct: totalProduct,
     tags,
-    totalProduct: totalProduct
   }
 
    // Update the product in the database

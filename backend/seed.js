@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 const { faker } = require('@faker-js/faker');
+
+const bcrypt = require('bcrypt');
+
 const Product = require('./Model/productModel'); // Adjust the path as necessary
 const User = require('./Model/userModel'); // Adjust the path as necessary
 const Category = require('./Model/categoryModel'); // Adjust the path as necessary
@@ -75,6 +78,7 @@ const generateProducts = async () => {
 
 const generateUsers = async () => {
   const products = await Product.find();
+  const hashedPassword = await bcrypt.hash("Password@123", 10);
 
   const users = Array.from({ length: 20 }, () => {
     const purchasedProducts = faker.helpers.arrayElements(products, { min: 1, max: 5 }).map(product => ({
@@ -86,12 +90,11 @@ const generateUsers = async () => {
       productId: product._id,
       rating: faker.number.int({ min: 1, max: 5 })
     }));
-
     return {
       email: faker.internet.email(),
-      password: "Password@123",
-      role: faker.helpers.arrayElement(['admin', 'user']),
-      isVerified: faker.datatype.boolean(),
+      password: hashedPassword,
+      role: faker.helpers.arrayElement(['user']),
+      isVerified: true,
       purchaseHistory: purchasedProducts,
       ratings: ratings,
       userDetail: {

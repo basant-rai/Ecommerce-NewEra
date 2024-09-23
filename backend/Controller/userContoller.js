@@ -128,7 +128,7 @@ exports.logIn = async (req, res) => {
     return res.status(400).json({ error: "Please verify your email" })
   }
 
-  // const checkPassword = await bcrypt.compare(password, checkUser.password);
+  const checkPassword = await bcrypt.compare(password, checkUser.password);
   const access_token = await jwt.sign(
     {
       name: checkUser.userDetail.firstName,
@@ -139,9 +139,9 @@ exports.logIn = async (req, res) => {
     { expiresIn: "1d" }
   )
 
-  // if (!checkPassword) {
-  //   return res.status(400).json({ error: "Password is invalid" });
-  // }
+  if (!checkPassword) {
+    return res.status(400).json({ error: "Password is invalid" });
+  }
   return res.status(201).json({
     message: "Login successful",
     accessToken: access_token,
